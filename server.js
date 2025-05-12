@@ -99,7 +99,7 @@ const summaryRows = [
     ["", "", "", "TOTAL KMS", "", "", totalKm, ""],
     ["", "", "", "TOTAL D.A.", "", "", totalDA, ""],
     ["", "", "", "TOTAL KMS * 3", "", "", totalKm * 3, ""],
-    ["", "", "", "Mobile + TOTAL", "", "", data.mobileCharges, `₹${totalKm * 3 + totalDA + Number(data.mobileCharges)}`],
+    ["", "", "", "Mobile + TOTAL", "", "", data.mobileCharges, `${totalKm * 3 + totalDA + Number(data.mobileCharges)}`],
 ];
 
 const summaryRowHeight = 20;
