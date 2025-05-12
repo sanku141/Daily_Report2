@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "moment": "^2.30.1",
+    "pdfkit": "^0.17.1"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "bhagyalaxmi-dairy",
+  "version": "1.0.0",
+  "main": "backup.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

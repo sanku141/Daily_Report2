@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daily Work Sheet - BhagyLaxmi Dairy Farms</title>
+    <style>
+        table, th, td { border: 1px solid black; border-collapse: collapse; padding: 5px; }
+        th, td { text-align: center; }
+        /* #tableBody {border: 1px solid black; border-collapse: collapse; padding: 5px;} */
+      
+    </style>
+</head>
+<body>
+    <h2>BHAGYALAXMI DAIRY FARMS</h2>
+    <p>DAILY WORK SHEET (<span id="monthYear">Month-Year</span>)</p>
+    <p>HQ. PIMPALGOAN BASWANT</p>
+
+    <label for="month">Select Month & Year:</label>
+    <input type="month" id="month" onchange="updateDates()"><br><br>
+
+    <form id="worksheetForm">
+        <table id="worksheet">
+            <thead>
+                <tr>
+                    <th>Sr. No.</th><th>Date</th><th>Area Name (Route)</th><th>Work Done</th>
+                    <th>In Kms</th><th>Out Kms</th><th>Total K.M</th><th>D.A.</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table><br>
+
+        <label>Mobile Charges: </label><input type="number" id="mobileCharges" value="300"><br><br>
+        <button type="button" onclick="generatePDF()">Generate PDF</button>
+    </form>
+
+    <script>
+        function updateDates() {
+            const monthInput = document.getElementById('month').value;
+            const date = new Date(monthInput + "-01");
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            document.getElementById("monthYear").innerText = date.toLocaleString('default', { month: 'long' }) + "-" + year;
+
+            const tableBody = document.getElementById("tableBody");
+            tableBody.innerHTML = '';
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            for (let i = 1; i <= daysInMonth; i++) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    
+                    <td>${i}</td>
+                    <td>${i}/${month + 1}/${year}</td>
+                    <td><input type="text" name="route${i}"></td>
+                    <td><input type="text" name="work${i}"></td>
+                    <td><input type="number" name="in${i}" oninput="calcTotal(${i})"></td>
+                    <td><input type="number" name="out${i}" oninput="calcTotal(${i})"></td>
+                    <td><input type="number" name="total${i}" readonly></td>
+                    <td><input type="number" name="da${i}"></td>
+                  
+                `;
+                tableBody.appendChild(tr);
+            }
+        }
+
+        function calcTotal(i) {
+            const inKm = parseFloat(document.querySelector(`[name="in${i}"]`).value) || 0;
+            const outKm = parseFloat(document.querySelector(`[name="out${i}"]`).value) || 0;
+            document.querySelector(`[name="total${i}"]`).value = outKm - inKm;
+        }
+
+        function generatePDF() {
+            const monthInput = document.getElementById("month").value;
+            const date = new Date(monthInput + "-01");
+            const monthYear = date.toLocaleString("default", { month: "long" }) + "-" + date.getFullYear();
+
+            const entries = [];
+            const rows = document.querySelectorAll("#tableBody tr");
+            rows.forEach((tr, i) => {
+                const cells = tr.querySelectorAll("input");
+                entries.push({
+                    date: tr.children[1].innerText,
+                    route: cells[0].value,
+                    work: cells[1].value,
+                    inKm: Number(cells[2].value) || 0,
+                    outKm: Number(cells[3].value) || 0,
+                    da: Number(cells[5].value) || 0,
+                });
+            });
+
+            const mobileCharges = document.getElementById("mobileCharges").value || 0;
+
+            fetch("/generate-pdf", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ monthYear, entries, mobileCharges })
+            })
+            .then(res => res.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                // a.download = "daily-work-sheet.pdf";
+                a.click();
+            });
+        }
+    </script>
+</body>
+</html>
