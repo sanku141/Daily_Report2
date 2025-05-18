@@ -52,7 +52,7 @@ data.entries.forEach((entry, i) => {
         entry.work,
         entry.inKm,
         entry.outKm,
-        entry.outKm - entry.inKm,
+        entry.totkm,
         entry.da,
     ];
 
